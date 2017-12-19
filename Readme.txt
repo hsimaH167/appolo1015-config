@@ -1,3 +1,3 @@
 This is a document.
 
-It really is!!
+A text document.

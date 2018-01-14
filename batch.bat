@@ -131,7 +131,7 @@ secedit.exe /configure /db %windir%\securitynet.sdb /cfg C:\secconfig.cfg /areas
 )
 pause
 
-ause
+
 REM Set audit policy
 cls
 echo SET AUDIT POLICY
@@ -161,6 +161,8 @@ Auditpol /set /category:"System" /Success:enable /failure:enable
 Auditpol /set /category:"Detailed Tracking" /Success:enable /failure:enable
 )
 pause
+
+
 REM Set audit policy
 cls
 echo SET SECURITY OPTIONS
@@ -187,7 +189,68 @@ reg add "HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Winlogo
 wmic useraccount where name='Administrator' call rename name='CyberPatriot'
 wmic useraccount where name='Guest' call rename name='Administrator'
 )
+pause
 
+
+REM Disable Remote Desktop
+cls
+echo DISABLE REMOTE DESKTOP
+echo.
+echo This will set the following settings:
+echo.
+echo Deny connections to this computer
+
+echo.
+set/p "option=Do you want to perform this action? y or n:"
+if %option%==y (
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Terminal Server" /v fDenyTSConnections /t REG_DWORD /d 0 /f
+)
+pause
+
+
+REM Clean Hosts File
+cls
+echo DISABLE REMOTE DESKTOP
+echo.
+echo This will set the following settings:
+echo.
+echo Deny connections to this computer
+
+echo.
+set/p "option=Do you want to perform this action? y or n:"
+if %option%==y (
+nul > c:\windows\system32\drivers\etc\hosts
+)
+pause
+
+
+REM Block Ports
+cls
+echo BLOCK PORTS
+echo.
+echo This will set the following settings:
+echo.
+echo Block port 22: SSH
+echo Block port 25: SMTP
+echo Block port 110: POP3
+echo Block port 161: SNMP 
+echo Block port 289: LDAP  
+
+echo.
+set/p "option=Do you want to perform this action? y or n:"
+if %option%==y (
+netsh advfirewall firewall add rule name="deny22" dir=in action=block protocol=tcp remoteport=22
+netsh advfirewall firewall add rule name="deny25" dir=in action=block protocol=tcp remoteport=25
+netsh advfirewall firewall add rule name="deny110" dir=in action=block protocol=tcp remoteport=110
+netsh advfirewall firewall add rule name="deny161" dir=in action=block protocol=tcp remoteport=161
+netsh advfirewall firewall add rule name="deny289" dir=in action=block protocol=tcp remoteport=289
+
+netsh advfirewall firewall add rule name="deny22-" dir=in action=block protocol=tcp remoteport=22 localport=22
+netsh advfirewall firewall add rule name="deny25-" dir=in action=block protocol=tcp remoteport=25 localport=25
+netsh advfirewall firewall add rule name="deny110-" dir=in action=block protocol=tcp remoteport=110 localport=110
+netsh advfirewall firewall add rule name="deny161-" dir=in action=block protocol=tcp remoteport=161 localport=161
+netsh advfirewall firewall add rule name="deny389-" dir=in action=block protocol=tcp remoteport=389 localport=389
+)
 pause
 goto :MainMenu
 :UserManager
